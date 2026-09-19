@@ -84,7 +84,13 @@ AJson OpenAIChatImpl::makeQueryString(Params params, const IOpenAIChat::Session&
 
 AFuture<AJson> OpenAIChatImpl::makeHttpRequest(Endpoint endpoint, std::string query, std::string_view sessionId) {
     ALOG_TRACE(LOG_TAG) << "Query: " << query;
-    AVector<AString> headers = {"Content-Type: application/json", "x-session-id: {}"_format(sessionId) };
+    // x-session-id is used by Kuni's own proxy; x-agent-session is understood by
+    // FreeDeepseekAPI. Other OpenAI-compatible providers safely ignore both.
+    AVector<AString> headers = {
+        "Content-Type: application/json",
+        "x-session-id: {}"_format(sessionId),
+        "x-agent-session: {}"_format(sessionId),
+    };
     if (!endpoint.bearerKey.empty()) {
         headers << "Authorization: Bearer {}"_format(endpoint.bearerKey);
     }
@@ -183,7 +189,11 @@ _<IOpenAIChat::StreamingResponse> OpenAIChatImpl::chatStreaming(Params params, I
         };
 
         AUI_ASSERT(!sessionId.empty());
-        AVector<AString> headers = {"Content-Type: application/json", "x-session-id: {}"_format(sessionId) };
+        AVector<AString> headers = {
+            "Content-Type: application/json",
+            "x-session-id: {}"_format(sessionId),
+            "x-agent-session: {}"_format(sessionId),
+        };
         if (!params.config.endpoint.bearerKey.empty()) {
             headers << "Authorization: Bearer {}"_format(params.config.endpoint.bearerKey);
         }

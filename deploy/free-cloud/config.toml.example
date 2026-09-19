@@ -14,8 +14,8 @@ lockdown = "papik_only"
 # FreeDeepseekAPI: OpenAI-compatible web-session proxy on the same VPS.
 llm = { endpoint = { baseUrl = "http://127.0.0.1:9655/v1/", bearerKey = "REPLACE_WITH_PROXY_API_KEY" }, model = "deepseek-reasoner" }
 
-# Cloudflare Workers AI: cloud embeddings for diary/RAG, no local AI model.
-embedding = { endpoint = { baseUrl = "https://api.cloudflare.com/client/v4/accounts/REPLACE_CLOUDFLARE_ACCOUNT_ID/ai/v1/", bearerKey = "REPLACE_CLOUDFLARE_API_TOKEN" }, model = "@cf/qwen/qwen3-embedding-0.6b" }
+# Google Gemini API: cloud embeddings for diary/RAG, no local AI model.
+embedding = { endpoint = { baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai/", bearerKey = "REPLACE_GEMINI_API_KEY" }, model = "gemini-embedding-001" }
 
 [misc]
 request_timeout_secs = 120

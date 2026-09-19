@@ -4,7 +4,7 @@ LLM character AI. It interacts with the world through a text-based Telegram Clie
 confused with Telegram Bot API). It features RAG (persistent memory storage with ANN search) and nightly sanity
 checks.
 
-For a low-resource VPS profile that uses FreeDeepseekAPI for the main reasoning model and Cloudflare Workers AI for
+For a low-resource VPS profile that uses FreeDeepseekAPI for the main reasoning model and Google Gemini API for
 embeddings, see [docs/free-cloud-ru.md](docs/free-cloud-ru.md).
 
 ## Goals

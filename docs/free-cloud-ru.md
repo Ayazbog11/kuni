@@ -4,7 +4,7 @@
 
 - Kuni остаётся Telegram-клиентом, памятью/RAG и системой инструментов;
 - FreeDeepseekAPI предоставляет основную reasoning-модель через OpenAI-compatible API;
-- Cloudflare Workers AI создаёт embeddings для памяти, поэтому Ollama не нужен;
+- Google Gemini API создаёт embeddings для памяти, поэтому Ollama не нужен;
 - прокси FreeDeepseekAPI слушает только `127.0.0.1:9655` и не публикуется в Интернет.
 
 Профиль подготовлен для снимка `alex2772/kuni` commit `3bbf87d6fc37091758e00b8f1834ff3b2ae6c1f0`. FreeDeepseekAPI закреплён на commit `31386b18cd485e5c6677bc0f46ac0ae3d92fbfd5`.
@@ -25,17 +25,18 @@ npm run auth
 
 Откроется отдельный профиль Chrome. Войдите в свой аккаунт DeepSeek, отправьте короткое сообщение и вернитесь в терминал. В каталоге появится `deepseek-auth.json`.
 
-## 2. Бесплатные embeddings
+## 2. Бесплатный API-ключ для embeddings
 
-Создайте Cloudflare API token с доступом к Workers AI и узнайте Account ID. Workers AI имеет OpenAI-compatible endpoint `/v1/embeddings`; бесплатная квота ограничена и может изменяться.
+Создайте ключ Gemini API в Google AI Studio. Gemini имеет OpenAI-compatible endpoint `/v1/embeddings`; новые аккаунты начинают с Free Tier, но доступность и квота зависят от проекта и могут изменяться.
 
 В `deploy/free-cloud/config.toml.example` замените:
 
-- `REPLACE_CLOUDFLARE_ACCOUNT_ID`;
-- `REPLACE_CLOUDFLARE_API_TOKEN`;
+- `REPLACE_GEMINI_API_KEY`;
 - обязательные поля Telegram и владельца.
 
-Модель `@cf/qwen/qwen3-embedding-0.6b` хорошо подходит для многоязычной памяти. После смены embedding-модели существующие embeddings нужно построить заново, потому что пространства разных моделей несовместимы.
+Модель `gemini-embedding-001` поддерживает многоязычный текст. После смены embedding-модели существующие embeddings нужно построить заново, потому что пространства разных моделей несовместимы.
+
+Важно: на бесплатном тарифе Google может использовать отправленный контент для улучшения продуктов. Kuni отправляет провайдеру записи памяти и контекст разговоров, поэтому не используйте этот профиль для конфиденциальных переписок.
 
 ## 3. Секрет прокси
 
@@ -84,10 +85,10 @@ curl --fail http://127.0.0.1:9655/health
 
 ## Резервный бесплатный LLM
 
-Если Web API DeepSeek временно сломается, можно вручную переключить `general.llm` на OpenAI-compatible модель Cloudflare Workers AI, используя тот же Account ID и token, что и для embeddings. Например:
+Если Web API DeepSeek временно сломается, можно вручную переключить `general.llm` на OpenAI-compatible модель Gemini, используя тот же API key, что и для embeddings. Например:
 
 ```toml
-llm = { endpoint = { baseUrl = "https://api.cloudflare.com/client/v4/accounts/ACCOUNT_ID/ai/v1/", bearerKey = "CLOUDFLARE_API_TOKEN" }, model = "@cf/zai-org/glm-4.7-flash" }
+llm = { endpoint = { baseUrl = "https://generativelanguage.googleapis.com/v1beta/openai/", bearerKey = "GEMINI_API_KEY" }, model = "gemini-3.8-flash" }
 ```
 
-Это ручной fallback: Kuni подхватит изменение `config.toml` без сохранения ключей в репозитории. Перед использованием проверьте актуальную бесплатную квоту и доступность модели в Cloudflare.
+Это ручной fallback: Kuni подхватит изменение `config.toml` без сохранения ключей в репозитории. Перед использованием проверьте актуальную бесплатную квоту и доступность модели в Google AI Studio.
