@@ -1,0 +1,28 @@
+services:
+  free-deepseek-api:
+    # Pin the reviewed source instead of building an unversioned moving branch.
+    build:
+      context: https://github.com/ForgetMeAI/FreeDeepseekAPI.git#31386b18cd485e5c6677bc0f46ac0ae3d92fbfd5
+      dockerfile: Containerfile
+    restart: unless-stopped
+    ports:
+      # Never expose the browser-session proxy directly to the Internet.
+      - "127.0.0.1:9655:9655"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    secrets:
+      - source: deepseek_auth
+        target: deepseek-auth.json
+      - source: proxy_api_key
+        target: proxy-api-key
+
+secrets:
+  deepseek_auth:
+    file: ./secrets/deepseek-auth.json
+  proxy_api_key:
+    file: ./secrets/proxy-api-key

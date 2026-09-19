@@ -3,3 +3,21 @@ cmake-build-**
 *uild*
 .DS_Store
 bin
+
+# Runtime state and generated prompts.
+data/
+logs/
+logs_proxy/
+last_query.json
+character_base.md
+character_appearance.md
+
+# Secrets. config.toml contains Telegram and model-provider credentials.
+config.toml
+.env
+*.pem
+deepseek-auth.json
+deepseek-accounts.json
+.chrome-profile-deepseek/
+.chrome-for-testing-profile-deepseek/
+deploy/free-cloud/secrets/
